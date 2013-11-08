@@ -1,0 +1,16 @@
+#!upstart
+description "Mailcatcher SMTP dev tool"
+
+start on startup
+stop on shutdown
+
+<%
+command = ["mailcatcher"]
+command << "--http-ip #{node['mailcatcher']['http-ip']}"
+command << "--http-port #{node['mailcatcher']['http-port']}"
+command << "--smtp-ip #{node['mailcatcher']['smtp-ip']}" if node['mailcatcher']['smtp-ip']
+command << "--smtp-port #{node['mailcatcher']['smtp-port']}"
+command = command.join(" ")
+%>
+
+exec <%= command %>

@@ -26,15 +26,20 @@ execute "mailcatcher" do
   action :run
 end
 
-command = ["mailcatcher"]
-command << "--http-ip #{node['mailcatcher']['http-ip']}"
-command << "--http-port #{node['mailcatcher']['http-port']}"
-command << "--smtp-ip #{node['mailcatcher']['smtp-ip']}" if node['mailcatcher']['smtp-ip']
-command << "--smtp-port #{node['mailcatcher']['smtp-port']}"
-command = command.join(" ")
-
-# Start MailCatcher
-bash "mailcatcher" do
-  not_if "netstat -anp | grep :#{node['mailcatcher']['http-port']}"
-  code command
+template "/etc/init/mailcatcher.conf" do
+  source "mailcatcher.upstart.conf.erb"
+  mode 0644
+  notifies :restart, "service[mailcatcher]", :immediately
 end
+
+service "mailcatcher" do
+  provider Chef::Provider::Service::Upstart
+  supports :restart => true
+  action :nothing
+end
+
+# # Start MailCatcher
+# bash "mailcatcher" do
+#   not_if "netstat -anp | grep :#{node['mailcatcher']['http-port']}"
+#   code command
+# end
