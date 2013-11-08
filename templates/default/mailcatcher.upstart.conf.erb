@@ -4,6 +4,7 @@ description "Mailcatcher SMTP dev tool"
 start on startup
 stop on shutdown
 
+
 <%
 command = ["mailcatcher"]
 command << "--http-ip #{node['mailcatcher']['http-ip']}"
@@ -13,4 +14,10 @@ command << "--smtp-port #{node['mailcatcher']['smtp-port']}"
 command = command.join(" ")
 %>
 
-exec <%= command %>
+script
+  export RBENV_ROOT=/opt/rbenv
+  export PATH=$PATH:/opt/rbenv/bin:/opt/rbenv/shims:/usr/local/bin
+  eval "$(rbenv init - --no-rehash)"
+  rbenv shell 2.0.0-p0
+  <%= command %>
+end script
