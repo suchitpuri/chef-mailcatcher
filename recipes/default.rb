@@ -33,7 +33,7 @@ template "/etc/init/mailcatcher.conf" do
 end
 
 service "mailcatcher" do
-  provider Chef::Provider::Service::Upstart
+  provider Chef::Provider::Service::Init::Redhat
   supports :restart => true
   action :nothing
 end
